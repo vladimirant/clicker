@@ -1,0 +1,13 @@
+*********************** UBUNTU ***********************************
+*********************** terminal logging file ********************
+tail -f catalina.out
+
+*********************** add environment var **********************
+export JAVA_HOME=/usr/lib/jvm/java-7-oracle/
+source /etc/environment
+
+# and check
+echo $JAVA_HOME
+
+*********************** path to program ************************
+/usr/bin/program_name
