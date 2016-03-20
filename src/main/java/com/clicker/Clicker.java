@@ -55,7 +55,7 @@ public class Clicker {
                     if (elementForLike.getText().equals("Like")) {
                         elementForLike.click();
                     } else {
-                        elementForLike.click();
+                        elementForLike.click();//if has been liked that at first set unlike and than set a like
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
