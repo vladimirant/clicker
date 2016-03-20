@@ -4,4 +4,6 @@ out/
 target/archive-tmp
 target/classes
 target/generated-sources
+target/generated-test-sources
+target/test-classes
 .idea/
