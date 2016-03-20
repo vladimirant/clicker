@@ -63,6 +63,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <finalName>clicker</finalName>
                     <appendAssemblyId>false</appendAssemblyId>

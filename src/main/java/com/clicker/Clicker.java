@@ -175,12 +175,16 @@ public class Clicker {
             WebElement passElement = driver.findElement(By.name("password"));
             passElement.sendKeys(pass);
             passElement.submit();
-            driver.navigate().to(MAIN_URL + File.separator + PATH_URL);
+            String targetPath = MAIN_URL + File.separator + PATH_URL;
+            driver.navigate().to(targetPath);
+
+            //fix response error while login
+            if (!driver.getCurrentUrl().equals(targetPath)) {
+                driver.findElement(By.xpath("//*[@id=\"info\"]/div[3]/div/div[1]/a")).click();
+                driver.navigate().to(targetPath);
+            }
         } catch(Exception e) {
             throw new RegistrationException(e.getMessage());
         }
     }
-
-
-
 }
