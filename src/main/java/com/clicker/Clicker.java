@@ -178,6 +178,8 @@ public class Clicker {
             String targetPath = MAIN_URL + File.separator + PATH_URL;
             driver.navigate().to(targetPath);
 
+            Thread.sleep(1000);
+
             //fix response error while login
             if (!driver.getCurrentUrl().equals(targetPath)) {
                 driver.findElement(By.xpath("//*[@id=\"info\"]/div[3]/div/div[1]/a")).click();

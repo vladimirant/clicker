@@ -5,7 +5,7 @@
     <properties>
         <clicker.login>albert.apercot</clicker.login>
         <clicker.pass>123456a</clicker.pass>
-        <clicker.pathToDriver>/home/vladimir/dev/clicker/selenium/chromedriver</clicker.pathToDriver>
+        <clicker.pathToDriver>/home/vladimir/tmp/clicker/selenium/chromedriver</clicker.pathToDriver>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
