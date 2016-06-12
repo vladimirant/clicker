@@ -170,11 +170,27 @@ public class Clicker {
     private void registration(WebDriver driver, String mainUrl, String username, String pass) throws RegistrationException {
         try {
             driver.get(mainUrl);
-            driver.findElement(By.xpath("//*[@id=\"info\"]/div/div[1]/div[1]/a")).click();
+            driver.findElement(By.xpath("//*[@id=\"uLogin\"]/div/a")).click();
+
+            //switch to new window for registration
+            String winHandleBefore = driver.getWindowHandle();
+            for(String winHandle : driver.getWindowHandles()){
+                driver.switchTo().window(winHandle);
+            }
+
             driver.findElement(By.name("username")).sendKeys(username);
+
             WebElement passElement = driver.findElement(By.name("password"));
             passElement.sendKeys(pass);
             passElement.submit();
+
+            Thread.sleep(2000);
+
+            //handle close registration window
+            driver.switchTo().window(winHandleBefore);
+
+            Thread.sleep(1000);
+
             String targetPath = MAIN_URL + "/" + PATH_URL;
             driver.navigate().to(targetPath);
 
