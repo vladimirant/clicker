@@ -6,4 +6,8 @@ target/classes
 target/generated-sources
 target/generated-test-sources
 target/test-classes
+target/site
+target/surefire-reports
+target/maven-archiver
+driver/
 .idea/
