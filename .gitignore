@@ -9,5 +9,4 @@ target/test-classes
 target/site
 target/surefire-reports
 target/maven-archiver
-driver/
 .idea/
