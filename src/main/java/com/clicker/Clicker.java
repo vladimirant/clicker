@@ -7,12 +7,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import com.clicker.util.Randomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Clicker {
+
+    private static final Logger logger = LoggerFactory.getLogger(Clicker.class);
+
     private static String MAIN_URL = "http://socgain.com";
     private static String PATH_URL = "elike";
     private WebDriver driver;
@@ -26,56 +32,50 @@ public class Clicker {
     private class ClickableTask implements Callable<Boolean> {
         @Override
         public Boolean call() throws Exception {
+            logger.info("Start clickable task");
             isRunningService.set(true);
             try {
                 while (true) {
-                    try {
-                        Thread.sleep(Randomizer.getRandomTime(18000, 22000));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("****************");
-                    System.out.println("Clicking: START!");
-                    driver.findElement(By.xpath("//*[@id=\"pjax-container\"]/div[1]/div[2]/div[1]/div/a")).click();
+                    int sleepTime = Randomizer.getRandomTime(16000, 21000);
+                    logger.info("Sleep {} sec before next click", sleepTime / 1000);
+
+                    sleep(sleepTime);
+
+                    logger.info("****************");
+                    logger.info("Clicking: START!");
+                    driver.findElement(By.xpath("//*[@id=\"vip\"]/div/a[1]")).click();
+
+                    sleep(2000);
 
                     String winHandleBefore = driver.getWindowHandle();
-                    for(String winHandle : driver.getWindowHandles()){
-                        driver.switchTo().window(winHandle);
-                    }
-                    try {
-                        Thread.sleep(Randomizer.getRandomTime(3000, 4000));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    for (String winHandle : driver.getWindowHandles()) {
+                        if (!winHandleBefore.equals(winHandle)) {
+                            driver.switchTo().window(winHandle);
+                        }
                     }
 
-                    WebElement elementForLike = driver.findElement(By.xpath("//*[@id=\"react-root\"]/section/main/div/div/article/div[2]/section[2]/a"));
+                    sleep(Randomizer.getRandomTime(3000, 4000));
 
-                    System.out.println(elementForLike.getText()+ " #" +likeCounter.incrementAndGet());
+                    WebElement elementForLike = driver.findElement(By.xpath("//*[@id=\"react-root\"]/section/main/div/div/article/div[2]/section[1]/a[1]"));
+                    logger.info(elementForLike.getText() + " #" + likeCounter.incrementAndGet());
 
                     if (elementForLike.getText().equals("Like")) {
                         elementForLike.click();
                     } else {
                         elementForLike.click();//if has been liked that at first set unlike and than set a like
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        sleep(1000);
                         elementForLike.click();
                     }
 
-                    try {
-                        Thread.sleep(Randomizer.getRandomTime(2500, 3500));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    sleep(Randomizer.getRandomTime(2500, 3500));
 
                     driver.close();
-
                     driver.switchTo().window(winHandleBefore);
-                    System.out.println("Clicking: FINISH!");
-                    System.out.println("****************");
+                    logger.info("Clicking: FINISH!");
+                    logger.info("****************");
                 }
+            } catch (Exception e) {
+                logger.error("Error in click process.", e);
             }finally {
                 isRunningService.set(false);
                 return false;
@@ -97,49 +97,33 @@ public class Clicker {
             new Clicker().startService(username, pass, pathToDriver);
         } catch (Error error) {
             error.printStackTrace();
-            //TODO send mail
         }
     }
 
     private void startService(String username, String pass, String pathToDriver) throws Error {
         while (!isRunningService.get()) {
             initService(username, pass, pathToDriver);
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            sleep(10000);
         }
 
         while (true) {
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            sleep(30000);
+
             try {
                 /* This thread will be blocked while workThread don't return 'false'
                    WorkThread return 'false' only when will throws any Exception */
                 status.get();
-                System.out.println("************ Fail #" + failCounter.incrementAndGet()+ " ************");
+                logger.info("************ Fail #" + failCounter.incrementAndGet() + " ************");
 
                 while (!isRunningService.get()) {
                     initService(username, pass, pathToDriver);
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    sleep(10000);
                 }
 
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    throw new Error(e.getMessage());
-                }
+                sleep(10000);
+
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error while start clicker", e);
                 throw new Error(e.getMessage());
             }
         }
@@ -150,10 +134,9 @@ public class Clicker {
         try {
             registration(driver, MAIN_URL, username, pass);
         } catch (RegistrationException e){
-            e.printStackTrace();
+            logger.error("Error in registration process", e);
             return;
         }
-
         status = executor.submit(callable);
     }
 
@@ -173,40 +156,49 @@ public class Clicker {
             driver.findElement(By.xpath("//*[@id='info']/div[3]/div/div[1]/a")).click();
 
             //switch to new window for registration
+            driver.findElement(By.xpath("//*[@id=\"popup1\"]/div/div[2]/div/form/div[1]/label[1]/a")).click();
+
+            //switch to new window for registration
             String winHandleBefore = driver.getWindowHandle();
             for(String winHandle : driver.getWindowHandles()){
                 driver.switchTo().window(winHandle);
             }
-
+            sleep(4000);
             driver.findElement(By.name("username")).sendKeys(username);
 
             WebElement passElement = driver.findElement(By.name("password"));
             passElement.sendKeys(pass);
             passElement.submit();
 
-            Thread.sleep(2000);
-
+            sleep(2000);
+            String tokenUrl = driver.getCurrentUrl();
             //handle close registration window
+            for (String winHandle : driver.getWindowHandles()){
+                if (!winHandle.equals(winHandleBefore)) {
+                    driver.switchTo().window(winHandle);
+                    driver.close();
+                }
+            }
+
             driver.switchTo().window(winHandleBefore);
 
-            Thread.sleep(1000);
+            sleep(2000);
 
-            String targetPath = MAIN_URL + "/" + PATH_URL;
-            driver.navigate().to(targetPath);
+            driver.findElement(By.xpath("//*[@id=\"popup1\"]/div/div[2]/div/form/div[1]/input")).sendKeys(tokenUrl);
+            driver.findElement(By.xpath("//*[@id=\"popup1\"]/div/div[2]/div/form/div[2]/button")).click();
+            sleep(2000);
 
-            Thread.sleep(2000);
+            driver.navigate().to(MAIN_URL + "/" + PATH_URL);
 
-            //fix response error while login
-            if (!driver.getCurrentUrl().equals(targetPath)) {
-                try{
-                    driver.findElement(By.xpath("//*[@id=\"info\"]/div[3]/div/div[1]/a")).click();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-                driver.navigate().to(targetPath);
-            }
+            sleep(2000);
         } catch(Exception e) {
-            throw new RegistrationException(e.getMessage());
+            throw new RegistrationException(e);
         }
+    }
+
+    private void sleep(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {}
     }
 }
