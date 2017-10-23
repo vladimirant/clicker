@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>
-        <clicker.login>albert.apercot</clicker.login>
-        <clicker.pass>123456a</clicker.pass>
-        <clicker.pathToDriver>/home/vladimir/dev/SeleniumClicker/driver/chromedriver</clicker.pathToDriver>
+        <clicker.login>test</clicker.login>
+        <clicker.pass>test</clicker.pass>
+        <clicker.pathToDriver>path_to_driver/chromedriver</clicker.pathToDriver>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
